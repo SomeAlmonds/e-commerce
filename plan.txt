@@ -1,0 +1,56 @@
+data base:
+  products:
+    id - name - price - stock - catigory?
+  costumers:
+    id - name - email? - password - credit card - orders?
+  reviews (json file?)
+    id - costumer_id - product_id - content - stars_num - date 
+  orders (json file?)
+    id - costumer_id - product_id - date - quantity 
+
+back end:
+  costumers:
+    handle user login auth
+    handle delete account
+    handle order history:
+      update when ordered or refunded 
+    handle reviews
+
+  products:
+    handle stock quantity:
+      update when ordered or refunded 
+      restock 
+    handle reviews
+    
+
+front end:
+  main page
+  browse products page:
+    filter and search
+  single product page:
+    order
+    add to cart 
+    reviews
+    similar products?
+
+  cart page:
+    order all
+    clear
+    select:
+      order selected
+      clear select
+      
+  refund form page
+  account page:
+    
+    account management
+      rename
+      change email
+      delete
+    
+    review history
+
+    order history:
+      view receipts: 
+        view product -> single product page
+        refund product -> refund form page
