@@ -1,8 +1,14 @@
 {
   "type": "module",
   "dependencies": {
+    "@types/express": "^5.0.6",
+    "@types/mysql": "^2.15.27",
+    "@types/node": "^25.5.0",
     "express": "^5.2.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.20.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

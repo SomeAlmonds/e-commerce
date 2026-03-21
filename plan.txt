@@ -1,8 +1,43 @@
 data base:
   products:
     id - name - price - stock - catigory?
-  costumers:
+  users:
     id - name - email? - password - credit card - orders?
+  
+      {
+    Field: 'user_id',
+    Type: 'int',
+    Null: 'NO',
+    Key: 'PRI',
+    Default: null,
+    Extra: 'auto_increment'
+  },
+  {
+    Field: 'user_name',
+    Type: 'varchar(255)',
+    Null: 'YES',
+    Key: '',
+    Default: null,
+    Extra: ''
+  },
+  {
+    Field: 'email',
+    Type: 'varchar(255)',
+    Null: 'YES',
+    Key: '',
+    Default: null,
+    Extra: ''
+  },
+  {
+    Field: 'password',
+    Type: 'varchar(255)',
+    Null: 'YES',
+    Key: '',
+    Default: null,
+    Extra: ''
+  }
+  
+  
   reviews (json file?)
     id - costumer_id - product_id - content - stars_num - date 
   orders (json file?)
