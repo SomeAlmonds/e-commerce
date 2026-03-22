@@ -1,13 +1,13 @@
-import type { mysql_con_type } from "./db.js";
-export declare function handleUserRegister(con: mysql_con_type, user: {
+import type { Connection } from "mysql2/promise";
+export declare function handleUserRegister(db: Connection, user: {
     user_name: string;
     email: string;
     password: string;
-}): void;
-export declare function chkEmailValid(email: string, con: mysql_con_type): boolean;
-export declare function chkUsernameValid(user_name: string, con: mysql_con_type): boolean;
+}): Promise<boolean>;
+export declare function chkEmailValid(email: string, db: Connection): Promise<boolean>;
+export declare function chkUsernameValid(user_name: string, db: Connection): Promise<boolean>;
 export declare function handleLogin(user: {
     user_name: string;
     password: string;
-}, con: mysql_con_type): void;
+}, db: Connection): Promise<boolean>;
 //# sourceMappingURL=user.d.ts.map
