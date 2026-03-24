@@ -1,12 +1,15 @@
 const TABLE_NAME = "users";
 const ENC_KEY = "temp_key";
-export async function handleUserRegister(db, user) {
+export async function handleUserRegister(user, db) {
     const query = `INSERT INTO ${TABLE_NAME} (user_name, email, password)` +
         `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
     try {
-        await db.query(query, [user.user_name, user.email, user.password]);
-        console.log("USER INSERT DONE");
-        return true;
+        const [rows] = await db.execute(query, [
+            user.user_name,
+            user.email,
+            user.password,
+        ]);
+        return rows.affectedRows ? true : false;
     }
     catch (err) {
         throw err;
@@ -14,11 +17,11 @@ export async function handleUserRegister(db, user) {
 }
 export async function chkEmailValid(email, db) {
     // check if email already exists
-    const query = `SELECT EXISTS( SELECT 1 FROM ${TABLE_NAME} WHERE email = ? ) AS val_exists;`;
+    const query = `SELECT 1 FROM ${TABLE_NAME} WHERE email = ?;`;
     try {
-        const [rows] = await db.query(query, [email]);
+        const [rows] = await db.execute(query, [email]);
         // return false if user name already exists
-        return rows[0]?.val_exists ? false : true;
+        return rows.length ? false : true;
     }
     catch (err) {
         throw err;
@@ -26,25 +29,41 @@ export async function chkEmailValid(email, db) {
 }
 export async function chkUsernameValid(user_name, db) {
     // check user_name exist
-    const query = `SELECT EXISTS( SELECT 1 FROM ${TABLE_NAME} WHERE user_name = ? ) AS val_exists;`;
+    const query = `SELECT 1 FROM ${TABLE_NAME} WHERE user_name = ?;`;
     try {
-        const [rows] = await db.query(query, [user_name]);
+        const [rows] = await db.execute(query, [user_name]);
         // return false if user name already exists
-        return rows[0]?.val_exists ? false : true;
+        return rows.length ? false : true;
     }
     catch (err) {
         throw err;
     }
 }
 export async function handleLogin(user, db) {
-    const query = `SELECT EXISTS( SELECT 1 FROM ${TABLE_NAME} WHERE` +
-        ` user_name = ? AND password = AES_ENCRYPT(?, '${ENC_KEY}')) AS val_exists;`;
+    const query = `SELECT 1 FROM ${TABLE_NAME} WHERE` +
+        ` user_name = ? AND password = AES_ENCRYPT(?, '${ENC_KEY}');`;
     try {
         const [rows] = await db.execute(query, [
             user.user_name,
             user.password,
         ]);
-        return rows[0]?.val_exists ? true : false;
+        return rows.length ? true : false;
+    }
+    catch (err) {
+        throw err;
+    }
+}
+export async function handleUpdateUser(user, db) {
+    const query = `UPDATE ${TABLE_NAME} SET user_name = ? , password = AES_ENCRYPT( ? , '${ENC_KEY}') ` +
+        `WHERE user_name = ? AND password = AES_ENCRYPT( ? , '${ENC_KEY}');`;
+    try {
+        const [rows] = await db.execute(query, [
+            user.new_user_name,
+            user.new_password,
+            user.old_user_name,
+            user.old_password,
+        ]);
+        return rows.affectedRows ? true : false;
     }
     catch (err) {
         throw err;
