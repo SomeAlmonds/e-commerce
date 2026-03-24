@@ -9,12 +9,11 @@ export const db = mysql.createPool({
     database: "defaultdb",
     enableKeepAlive: true,
 });
-try {
-    await chkUsernameValid("test_user", db);
-    const [rows] = await db.query("select * from users;");
-    console.log("SECOND LOG/////////////", rows);
-}
-catch (err) {
-    throw err;
-}
+// try {
+//   await chkUsernameValid("test_user", db);
+//   const [rows] = await db.query("select * from users;");
+//   console.log("SECOND LOG/////////////", rows);
+// } catch (err) {
+//   throw err;
+// }
 //# sourceMappingURL=db.js.map
