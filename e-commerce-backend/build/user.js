@@ -1,5 +1,5 @@
 const TABLE_NAME = "users";
-const ENC_KEY = "temp_key";
+const ENC_KEY = process.env.ENC_KEY;
 export async function handleUserRegister(user, db) {
     const query = `INSERT INTO ${TABLE_NAME} (user_name, email, password)` +
         `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;

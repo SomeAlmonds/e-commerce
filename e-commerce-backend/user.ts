@@ -5,7 +5,7 @@ import type {
 } from "mysql2/promise";
 
 const TABLE_NAME = "users";
-const ENC_KEY = "temp_key";
+const ENC_KEY = process.env.ENC_KEY;
 
 export async function handleUserRegister(
   user: {
