@@ -1,20 +1,5 @@
 const TABLE_NAME = "users";
 const ENC_KEY = process.env.ENC_KEY;
-export async function handleUserRegister(user, db) {
-    const query = `INSERT INTO ${TABLE_NAME} (user_name, email, password)` +
-        `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
-    try {
-        const [rows] = await db.execute(query, [
-            user.user_name,
-            user.email,
-            user.password,
-        ]);
-        return rows.affectedRows ? true : false;
-    }
-    catch (err) {
-        throw err;
-    }
-}
 export async function chkEmailValid(email, db) {
     // check if email already exists
     const query = `SELECT 1 FROM ${TABLE_NAME} WHERE email = ?;`;
@@ -34,6 +19,21 @@ export async function chkUsernameValid(user_name, db) {
         const [rows] = await db.execute(query, [user_name]);
         // return false if user name already exists
         return rows.length ? false : true;
+    }
+    catch (err) {
+        throw err;
+    }
+}
+export async function handleUserRegister(user, db) {
+    const query = `INSERT INTO ${TABLE_NAME} (user_name, email, password)` +
+        `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
+    try {
+        const [rows] = await db.execute(query, [
+            user.user_name,
+            user.email,
+            user.password,
+        ]);
+        return rows.affectedRows ? true : false;
     }
     catch (err) {
         throw err;

@@ -7,14 +7,14 @@ const PORT = process.env.PORT;
 console.log(process.env.LOG);
 app.use(helmet());
 app.use(cors({
-    origin: "http://localhost:5000/",
+    origin: process.env.ALLOWED_ORIGIN,
     methods: ["Get", "Post", "Put"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.use("/user", userRouter);
+app.use("/v1/users", userRouter);
 app.use("/", (req, res) => {
     res.send(`listining to ${req.protocol}://${req.get("host")}/${req.baseUrl}`);
 });
 app.listen(PORT);
 export default app;
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=app.js.map
