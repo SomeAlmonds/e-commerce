@@ -1,4 +1,8 @@
-import express from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import { db } from "../db.js";
 import {
   chkEmailValid,
@@ -10,11 +14,7 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.get("/", (req, res) => {
-  res.status(200).send("user route");
-});
-
-userRouter.post("/register", async (req, res) => {
+userRouter.post("/register", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
 
   const user_name = req.query.name?.toString();
@@ -49,12 +49,11 @@ userRouter.post("/register", async (req, res) => {
         res.status(204).send();
       } else {
         // if the db declines the data for some reason
-        res.status(500).send("Somthing went wrong :(");
+        next(new Error("database error"));
       }
       return;
     } catch (err) {
-      res.status(500).send(err);
-      return;
+      next(err);
     }
   } else {
     res.status(400).send("Invalid input");
@@ -62,7 +61,7 @@ userRouter.post("/register", async (req, res) => {
   }
 });
 
-userRouter.get("/login", async (req, res) => {
+userRouter.get("/login", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
 
   const user_name = req.query.name?.toString();
@@ -83,7 +82,7 @@ userRouter.get("/login", async (req, res) => {
         return;
       }
     } catch (err) {
-      res.status(500).send(err);
+      next(err);
       return;
     }
   } else {
@@ -92,7 +91,7 @@ userRouter.get("/login", async (req, res) => {
   }
 });
 
-userRouter.put("/update_user", async (req, res) => {
+userRouter.put("/update_user", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
 
   const old_user_name = req.query.old_name?.toString();
@@ -109,7 +108,7 @@ userRouter.put("/update_user", async (req, res) => {
         return;
       }
     } catch (err) {
-      res.status(500).send(err);
+      next(err);
       return;
     }
 
@@ -132,7 +131,7 @@ userRouter.put("/update_user", async (req, res) => {
         return;
       }
     } catch (err) {
-      res.status(500).send(err);
+      next(err);
       return;
     }
   } else {
@@ -140,5 +139,16 @@ userRouter.put("/update_user", async (req, res) => {
     return;
   }
 });
+
+userRouter.use("/", (req, res) => {
+  res.status(200).send("user route");
+});
+
+userRouter.use(
+  (err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(err);
+    res.status(500).send("somthing went wrong");
+  },
+);
 
 export default userRouter;

@@ -1,11 +1,8 @@
-import express from "express";
+import express, {} from "express";
 import { db } from "../db.js";
 import { chkEmailValid, chkUsernameValid, handleLogin, handleUpdateUser, handleUserRegister, } from "../user.js";
 const userRouter = express.Router();
-userRouter.get("/", (req, res) => {
-    res.status(200).send("user route");
-});
-userRouter.post("/register", async (req, res) => {
+userRouter.post("/register", async (req, res, next) => {
     res.setHeader("Content-Type", "application/json");
     const user_name = req.query.name?.toString();
     const user_email = req.query.email?.toString();
@@ -33,13 +30,12 @@ userRouter.post("/register", async (req, res) => {
             }
             else {
                 // if the db declines the data for some reason
-                res.status(500).send("Somthing went wrong :(");
+                next(new Error("database error"));
             }
             return;
         }
         catch (err) {
-            res.status(500).send(err);
-            return;
+            next(err);
         }
     }
     else {
@@ -47,7 +43,7 @@ userRouter.post("/register", async (req, res) => {
         return;
     }
 });
-userRouter.get("/login", async (req, res) => {
+userRouter.get("/login", async (req, res, next) => {
     res.setHeader("Content-Type", "application/json");
     const user_name = req.query.name?.toString();
     const user_pass = req.query.password?.toString();
@@ -64,7 +60,7 @@ userRouter.get("/login", async (req, res) => {
             }
         }
         catch (err) {
-            res.status(500).send(err);
+            next(err);
             return;
         }
     }
@@ -73,7 +69,7 @@ userRouter.get("/login", async (req, res) => {
         return;
     }
 });
-userRouter.put("/update_user", async (req, res) => {
+userRouter.put("/update_user", async (req, res, next) => {
     res.setHeader("Content-Type", "application/json");
     const old_user_name = req.query.old_name?.toString();
     const old_password = req.query.old_password?.toString();
@@ -88,7 +84,7 @@ userRouter.put("/update_user", async (req, res) => {
             }
         }
         catch (err) {
-            res.status(500).send(err);
+            next(err);
             return;
         }
         try {
@@ -108,7 +104,7 @@ userRouter.put("/update_user", async (req, res) => {
             }
         }
         catch (err) {
-            res.status(500).send(err);
+            next(err);
             return;
         }
     }
@@ -116,6 +112,13 @@ userRouter.put("/update_user", async (req, res) => {
         res.status(400).send("Invalid input");
         return;
     }
+});
+userRouter.use("/", (req, res) => {
+    res.status(200).send("user route");
+});
+userRouter.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).send("somthing went wrong");
 });
 export default userRouter;
 //# sourceMappingURL=user_route.js.map

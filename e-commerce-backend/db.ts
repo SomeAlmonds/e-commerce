@@ -1,9 +1,9 @@
 import mysql from "mysql2/promise";
 
 export const db = mysql.createPool({
-  host: "almohanads-mysql-almohanads-proj.f.aivencloud.com",
-  user: "almohanad",
-  password: "AVNS_7Cug3pMuzrwv9qd3x7J",
+  host: process.env.DB_HOST as string,
+  user: process.env.DB_USERNAME as string,
+  password: process.env.DB_PASSWORD as string,
   port: 21652,
   database: "defaultdb",
   enableKeepAlive: true,
