@@ -69,4 +69,14 @@ export async function handleUpdateUser(user, db) {
         throw err;
     }
 }
+export async function handleFetchUser(user_name, db) {
+    const query = `SELECT FROM ${TABLE_NAME} WHERE user_name = ?`;
+    try {
+        const [rows] = await db.execute(query, [user_name]);
+        return rows;
+    }
+    catch (err) {
+        throw err;
+    }
+}
 //# sourceMappingURL=user.js.map

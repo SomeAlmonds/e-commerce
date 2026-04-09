@@ -16,4 +16,5 @@ export declare function handleUpdateUser(user: {
     old_password: string;
     new_password: string;
 }, db: Connection): Promise<boolean>;
+export declare function handleFetchUser(user_name: string, db: Connection): Promise<import("mysql2/promise").QueryResult>;
 //# sourceMappingURL=user.d.ts.map

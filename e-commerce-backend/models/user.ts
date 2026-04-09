@@ -106,3 +106,13 @@ export async function handleUpdateUser(
     throw err;
   }
 }
+
+export async function handleFetchUser(user_name: string, db: Connection) {
+  const query = `SELECT FROM ${TABLE_NAME} WHERE user_name = ?`;
+  try {
+    const [rows] = await db.execute(query, [user_name]);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+}
