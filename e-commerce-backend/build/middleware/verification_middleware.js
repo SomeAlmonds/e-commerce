@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, {} from "jsonwebtoken";
 import { AppError } from "../utils/error_handler.js";
 const verify = jwt.verify;
 const JWT_KEY = process.env.JWT_KEY;
@@ -13,10 +13,11 @@ export function verifyJwt(req, res, next) {
     }
     try {
         const decoded = verify(token, JWT_KEY);
-        console.log(decoded);
+        req.user = { name: decoded.user_name };
         next();
     }
     catch (err) {
+        console.log(err);
         next(new AppError(403, "Invalid or expired token"));
     }
 }

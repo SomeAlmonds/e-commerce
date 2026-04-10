@@ -32,19 +32,18 @@ userRouter.post("/register", [
 ], registerUser);
 userRouter.post("/login", [
     body("name")
-        // .isString()
+        .optional()
+        .isString()
         .isLength({ min: 2 })
         .trim()
-        .notEmpty()
         .withMessage("user name"),
     body("password")
-        // .isString()
+        .isString()
         .isLength({ min: 8 })
         .escape()
         .exists()
-        .notEmpty()
         .withMessage("password"),
-    body("email").isEmail().normalizeEmail().notEmpty().withMessage("email"),
+    body("email").optional().isEmail().normalizeEmail().withMessage("email"),
 ], login);
 userRouter.put("/update", [
     body(["new_name", "old_name"])
@@ -62,18 +61,7 @@ userRouter.put("/update", [
         .notEmpty()
         .withMessage("password"),
 ], updateUser);
-userRouter.get("/:user", [
-    body("name")
-        .isString()
-        .isLength({ min: 2 })
-        .trim()
-        .exists()
-        .notEmpty()
-        .withMessage("user name"),
-], verifyJwt, getUserByName);
-userRouter.use("/", (req, res) => {
-    res.status(200).send("user route");
-});
+userRouter.get("/:user", verifyJwt, getUserByName);
 userRouter.use(errorHandler);
 export default userRouter;
 //# sourceMappingURL=user_route.js.map

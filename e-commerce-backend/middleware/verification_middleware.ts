@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import { AppError } from "../utils/error_handler.js";
 
 const verify = jwt.verify;
@@ -19,11 +19,12 @@ export function verifyJwt(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const decoded = verify(token, JWT_KEY);
-
-    console.log(decoded);
+    const decoded = verify(token, JWT_KEY) as JwtPayload;
+    req.user = { name: decoded.user_name };
     next();
   } catch (err) {
+    console.log(err);
+
     next(new AppError(403, "Invalid or expired token"));
   }
 }

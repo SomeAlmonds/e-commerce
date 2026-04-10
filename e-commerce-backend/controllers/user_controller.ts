@@ -21,7 +21,9 @@ export async function registerUser(
   next: NextFunction,
 ) {
   // validate input
-  validateInput(req, res, next);
+  if (!validateInput(req, res, next)) {
+    return;
+  }
   //
 
   const user_name = req.body.name as string;
@@ -63,28 +65,24 @@ export async function registerUser(
 
 export async function login(req: Request, res: Response, next: NextFunction) {
   // validate input
-  validateInput(req, res, next);
+  if (!validateInput(req, res, next)) {
+    return;
+  }
   //
 
-  const user_name = req.body.name as string;
-  const user_pass = req.body.password as string;
+  const { name, password } = req.body;
 
   try {
-    const login_valid = await handleLogin(
-      { user_name, password: user_pass },
-      db,
-    );
+    const login_valid = await handleLogin({ user_name: name, password }, db);
 
     if (login_valid) {
-      ///////////////// temp res ////////////////////////////
-
-      const token = sign({ user_name }, JWT_KEY, {
+      const token = sign({ user_name: name }, JWT_KEY, {
         expiresIn: "24h",
       });
 
-      return res.status(200).json({ message: "login successful", token });
+      return res.status(200).json({ message: "login successful", token }).end();
     } else {
-      return next(new AppError(403, "Incorrect username or password"));
+      throw new AppError(403, "Incorrect username or password");
     }
   } catch (err) {
     return next(err);
@@ -97,7 +95,9 @@ export async function updateUser(
   next: NextFunction,
 ) {
   // validate input
-  validateInput(req, res, next);
+  if (!validateInput(req, res, next)) {
+    return;
+  }
   //
 
   const old_user_name = req.body.old_name as string;
@@ -144,10 +144,12 @@ export async function getUserByName(
   next: NextFunction,
 ) {
   // validate input
-  validateInput(req, res, next);
+  if (!validateInput(req, res, next)) {
+    return;
+  }
   //
 
-  const user_name = req.body.name as string;
+  const user_name = req.params.user as string;
 
   try {
     const user = await handleFetchUser(user_name, db);
@@ -155,7 +157,7 @@ export async function getUserByName(
     if (!user) {
       return next(new AppError(404, "User not found"));
     }
-    res.status(200).json({ message: "Success", user });
+    res.status(200).json({ message: "Success", user, name: req.user.name });
   } catch (err) {
     return next(err);
   }

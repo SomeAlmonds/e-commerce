@@ -7,6 +7,7 @@ const app = express();
 
 const PORT = process.env.PORT;
 
+app.use(express.json());
 // app.use(helmet());
 // app.use(
 //   cors({
@@ -19,7 +20,9 @@ const PORT = process.env.PORT;
 app.use("/v1/users", userRouter);
 
 app.use("/", (req, res) => {
-  res.send(`listining to ${req.protocol}://${req.get("host")}/${req.baseUrl}`);
+  res.send({
+    message: `listining to ${req.protocol}://${req.get("host")}/${req.baseUrl}`,
+  });
 });
 
 app.listen(PORT);

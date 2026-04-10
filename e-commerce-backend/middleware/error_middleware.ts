@@ -11,21 +11,27 @@ export default function errorHandler(
   err.status = err.status || "fail";
 
   if (process.env.NODE_ENV === "dev") {
-    res.status(err.status_code).json({
-      status: err.status,
-      message: err.message,
-      stack: err.stack,
-      error: err,
-    });
-  } else {
-    if (err.is_operational) {
-      res.status(err.status_code).json({
+    return res
+      .status(err.status_code)
+      .json({
         status: err.status,
         message: err.message,
-      });
+        stack: err.stack,
+        error: err,
+      })
+      .end();
+  } else {
+    if (err.is_operational) {
+      return res
+        .status(err.status_code)
+        .json({
+          status: err.status,
+          message: err.message,
+        })
+        .end();
     } else {
       console.error("UNEXPECTED ERROR: ", err);
-      res.status(500).send("somthing went wrong");
+      return res.status(500).json({ message: "somthing went wrong" }).end();
     }
   }
 }

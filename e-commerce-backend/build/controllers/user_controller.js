@@ -7,7 +7,9 @@ const sign = jwt.sign;
 const JWT_KEY = process.env.JWT_KEY;
 export async function registerUser(req, res, next) {
     // validate input
-    validateInput(req, res, next);
+    if (!validateInput(req, res, next)) {
+        return;
+    }
     //
     const user_name = req.body.name;
     const user_email = req.body.email;
@@ -42,21 +44,21 @@ export async function registerUser(req, res, next) {
 }
 export async function login(req, res, next) {
     // validate input
-    validateInput(req, res, next);
+    if (!validateInput(req, res, next)) {
+        return;
+    }
     //
-    const user_name = req.body.name;
-    const user_pass = req.body.password;
+    const { name, password } = req.body;
     try {
-        const login_valid = await handleLogin({ user_name, password: user_pass }, db);
+        const login_valid = await handleLogin({ user_name: name, password }, db);
         if (login_valid) {
-            ///////////////// temp res ////////////////////////////
-            const token = sign({ user_name }, JWT_KEY, {
+            const token = sign({ user_name: name }, JWT_KEY, {
                 expiresIn: "24h",
             });
-            return res.status(200).json({ message: "login successful", token });
+            return res.status(200).json({ message: "login successful", token }).end();
         }
         else {
-            return next(new AppError(403, "Incorrect username or password"));
+            throw new AppError(403, "Incorrect username or password");
         }
     }
     catch (err) {
@@ -65,7 +67,9 @@ export async function login(req, res, next) {
 }
 export async function updateUser(req, res, next) {
     // validate input
-    validateInput(req, res, next);
+    if (!validateInput(req, res, next)) {
+        return;
+    }
     //
     const old_user_name = req.body.old_name;
     const old_password = req.body.old_password;
@@ -102,15 +106,17 @@ export async function updateUser(req, res, next) {
 }
 export async function getUserByName(req, res, next) {
     // validate input
-    validateInput(req, res, next);
+    if (!validateInput(req, res, next)) {
+        return;
+    }
     //
-    const user_name = req.body.name;
+    const user_name = req.params.user;
     try {
         const user = await handleFetchUser(user_name, db);
         if (!user) {
             return next(new AppError(404, "User not found"));
         }
-        res.status(200).json({ message: "Success", user });
+        res.status(200).json({ message: "Success", user, name: req.user.name });
     }
     catch (err) {
         return next(err);

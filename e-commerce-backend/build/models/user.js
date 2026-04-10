@@ -70,7 +70,7 @@ export async function handleUpdateUser(user, db) {
     }
 }
 export async function handleFetchUser(user_name, db) {
-    const query = `SELECT FROM ${TABLE_NAME} WHERE user_name = ?`;
+    const query = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE user_name = ? ;`;
     try {
         const [rows] = await db.execute(query, [user_name]);
         return rows;
