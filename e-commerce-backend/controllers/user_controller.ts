@@ -112,13 +112,10 @@ export async function updateUser(
   }
   //
 
-  const old_user_name = req.body.old_name as string;
-  const old_password = req.body.old_password as string;
-  const new_user_name = req.body.new_name as string;
-  const new_password = req.body.new_password as string;
+  const { old_name, old_password, new_name, new_password } = req.body;
 
   try {
-    const valid_user_name = await chkUsernameValid(new_user_name, db);
+    const valid_user_name = await chkUsernameValid(new_name, db);
 
     if (!valid_user_name) {
       return next(new AppError(409, "Username taken"));
@@ -128,22 +125,21 @@ export async function updateUser(
   }
 
   try {
-    const updated = await handleUpdateUser(
+    const updated_user = await handleUpdateUser(
       {
-        old_user_name,
+        old_name,
         old_password,
-        new_user_name,
+        new_name,
         new_password,
       },
       db,
     );
 
-    if (updated) {
-      /////////////// temp res //////////////////
-      const token = sign({ new_user_name }, JWT_KEY, { expiresIn: "24h" });
+    if (updated_user) {
+      const token = sign(updated_user, JWT_KEY, { expiresIn: "24h" });
       return res.status(200).json({ message: "User updated", token });
     } else {
-      return next(new AppError(403, "Incorrect password"));
+      return next(new AppError(403, "Incorrect user name or password"));
     }
   } catch (err) {
     return next(err);

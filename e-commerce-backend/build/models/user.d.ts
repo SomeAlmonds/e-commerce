@@ -11,10 +11,10 @@ export declare function handleLogin(user: {
     password: string;
 }, name_or_email: "user_name" | "user_email", db: Connection): Promise<RowDataPacket | undefined>;
 export declare function handleUpdateUser(user: {
-    new_user_name: string;
-    old_user_name: string;
+    new_name: string;
+    old_name: string;
     old_password: string;
     new_password: string;
-}, db: Connection): Promise<boolean>;
+}, db: Connection): Promise<RowDataPacket | undefined>;
 export declare function handleFetchUser(user_name: string, db: Connection): Promise<RowDataPacket | undefined>;
 //# sourceMappingURL=user.d.ts.map

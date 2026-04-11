@@ -14,6 +14,12 @@ export function verifyJwt(req, res, next) {
     try {
         const decoded = verify(token, JWT_KEY);
         req.user = { user_id: decoded.user_id, user_name: decoded.user_name };
+        // Check if token owner can make requested edit
+        if (req.path == "/update") {
+            if (req.user.user_name !== req.body.old_name) {
+                next(new AppError(403, "Token dose not match target user"));
+            }
+        }
         next();
     }
     catch (err) {

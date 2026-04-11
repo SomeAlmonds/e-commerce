@@ -60,7 +60,7 @@ userRouter.put("/update", [
         .exists()
         .notEmpty()
         .withMessage("password"),
-], updateUser);
+], verifyJwt, updateUser);
 userRouter.get("/:user", verifyJwt, getUserByName);
 userRouter.use(errorHandler);
 export default userRouter;

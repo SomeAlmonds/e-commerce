@@ -83,8 +83,8 @@ export async function handleLogin(
 
 export async function handleUpdateUser(
   user: {
-    new_user_name: string;
-    old_user_name: string;
+    new_name: string;
+    old_name: string;
     old_password: string;
     new_password: string;
   },
@@ -96,13 +96,21 @@ export async function handleUpdateUser(
 
   try {
     const [rows] = await db.execute<ResultSetHeader>(query, [
-      user.new_user_name,
+      user.new_name,
       user.new_password,
-      user.old_user_name,
+      user.old_name,
       user.old_password,
     ]);
 
-    return rows.affectedRows ? true : false;
+    if (rows.affectedRows) {
+      const query_2 = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE user_name = ?;`;
+      const [rows_2] = await db.execute<RowDataPacket[]>(query_2, [
+        user.new_name,
+      ]);
+      return rows_2[0];
+    } else {
+      return undefined;
+    }
   } catch (err) {
     throw err;
   }

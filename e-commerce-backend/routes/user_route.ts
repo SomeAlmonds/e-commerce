@@ -81,6 +81,7 @@ userRouter.put(
       .notEmpty()
       .withMessage("password"),
   ],
+  verifyJwt,
   updateUser,
 );
 
