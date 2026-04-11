@@ -9,7 +9,7 @@ const ENC_KEY = process.env.ENC_KEY;
 
 export async function chkEmailValid(email: string, db: Connection) {
   // check if email already exists
-  const query = `SELECT 1 FROM ${TABLE_NAME} WHERE email = ?;`;
+  const query = `SELECT 1 FROM ${TABLE_NAME} WHERE user_email = ?;`;
 
   try {
     const [rows] = await db.execute<RowDataPacket[]>(query, [email]);
@@ -44,7 +44,7 @@ export async function handleUserRegister(
   db: Connection,
 ) {
   const query =
-    `INSERT INTO ${TABLE_NAME} (user_name, email, password)` +
+    `INSERT INTO ${TABLE_NAME} (user_name, user_email, user_password)` +
     `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
 
   try {
@@ -61,20 +61,21 @@ export async function handleUserRegister(
 }
 
 export async function handleLogin(
-  user: { user_name: string; password: string },
+  user: { user_id: string; password: string },
+  name_or_email: "user_name" | "user_email",
   db: Connection,
 ) {
   const query =
-    `SELECT 1 FROM ${TABLE_NAME} WHERE` +
-    ` user_name = ? AND password = AES_ENCRYPT(?, '${ENC_KEY}');`;
+    `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE` +
+    ` ${name_or_email} = ? AND user_password = AES_ENCRYPT(?, '${ENC_KEY}');`;
 
   try {
     const [rows] = await db.execute<RowDataPacket[]>(query, [
-      user.user_name,
+      user.user_id,
       user.password,
     ]);
 
-    return rows.length ? true : false;
+    return rows[0];
   } catch (err) {
     throw err;
   }
@@ -90,8 +91,8 @@ export async function handleUpdateUser(
   db: Connection,
 ) {
   const query =
-    `UPDATE ${TABLE_NAME} SET user_name = ? , password = AES_ENCRYPT( ? , '${ENC_KEY}') ` +
-    `WHERE user_name = ? AND password = AES_ENCRYPT( ? , '${ENC_KEY}');`;
+    `UPDATE ${TABLE_NAME} SET user_name = ? , user_password = AES_ENCRYPT( ? , '${ENC_KEY}') ` +
+    `WHERE user_name = ? AND user_password = AES_ENCRYPT( ? , '${ENC_KEY}');`;
 
   try {
     const [rows] = await db.execute<ResultSetHeader>(query, [
@@ -108,10 +109,10 @@ export async function handleUpdateUser(
 }
 
 export async function handleFetchUser(user_name: string, db: Connection) {
-  const query = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE user_name = ? ;`;
+  const query = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE user_name = ? LIMIT 1;`;
   try {
-    const [rows] = await db.execute(query, [user_name]);
-    return rows;
+    const [rows] = await db.execute<RowDataPacket[]>(query, [user_name]);
+    return rows[0];
   } catch (err) {
     throw err;
   }

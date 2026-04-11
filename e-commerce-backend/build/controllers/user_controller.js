@@ -48,11 +48,23 @@ export async function login(req, res, next) {
         return;
     }
     //
-    const { name, password } = req.body;
+    const { password } = req.body;
+    // user can login with either user name or email
+    // the code below is to know wich one the user is using
+    let user_id = "";
+    let name_or_email = "user_name";
+    if (req.body.name) {
+        user_id = req.body.name;
+    }
+    else {
+        user_id = req.body.email;
+        name_or_email = "user_email";
+    }
+    //
     try {
-        const login_valid = await handleLogin({ user_name: name, password }, db);
-        if (login_valid) {
-            const token = sign({ user_name: name }, JWT_KEY, {
+        const user = await handleLogin({ user_id, password }, name_or_email, db);
+        if (user) {
+            const token = sign(user, JWT_KEY, {
                 expiresIn: "24h",
             });
             return res.status(200).json({ message: "login successful", token }).end();
@@ -110,13 +122,15 @@ export async function getUserByName(req, res, next) {
         return;
     }
     //
-    const user_name = req.params.user;
     try {
-        const user = await handleFetchUser(user_name, db);
+        const user = await handleFetchUser(req.params.user, db);
         if (!user) {
             return next(new AppError(404, "User not found"));
         }
-        res.status(200).json({ message: "Success", user, name: req.user.name });
+        res.status(200).json({
+            message: "Success",
+            user: { ...user, editable: req.user.user_name === user.user_name },
+        });
     }
     catch (err) {
         return next(err);

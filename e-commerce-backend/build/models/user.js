@@ -2,7 +2,7 @@ const TABLE_NAME = "users";
 const ENC_KEY = process.env.ENC_KEY;
 export async function chkEmailValid(email, db) {
     // check if email already exists
-    const query = `SELECT 1 FROM ${TABLE_NAME} WHERE email = ?;`;
+    const query = `SELECT 1 FROM ${TABLE_NAME} WHERE user_email = ?;`;
     try {
         const [rows] = await db.execute(query, [email]);
         // return false if user name already exists
@@ -25,7 +25,7 @@ export async function chkUsernameValid(user_name, db) {
     }
 }
 export async function handleUserRegister(user, db) {
-    const query = `INSERT INTO ${TABLE_NAME} (user_name, email, password)` +
+    const query = `INSERT INTO ${TABLE_NAME} (user_name, user_email, user_password)` +
         `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
     try {
         const [rows] = await db.execute(query, [
@@ -39,23 +39,23 @@ export async function handleUserRegister(user, db) {
         throw err;
     }
 }
-export async function handleLogin(user, db) {
-    const query = `SELECT 1 FROM ${TABLE_NAME} WHERE` +
-        ` user_name = ? AND password = AES_ENCRYPT(?, '${ENC_KEY}');`;
+export async function handleLogin(user, name_or_email, db) {
+    const query = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE` +
+        ` ${name_or_email} = ? AND user_password = AES_ENCRYPT(?, '${ENC_KEY}');`;
     try {
         const [rows] = await db.execute(query, [
-            user.user_name,
+            user.user_id,
             user.password,
         ]);
-        return rows.length ? true : false;
+        return rows[0];
     }
     catch (err) {
         throw err;
     }
 }
 export async function handleUpdateUser(user, db) {
-    const query = `UPDATE ${TABLE_NAME} SET user_name = ? , password = AES_ENCRYPT( ? , '${ENC_KEY}') ` +
-        `WHERE user_name = ? AND password = AES_ENCRYPT( ? , '${ENC_KEY}');`;
+    const query = `UPDATE ${TABLE_NAME} SET user_name = ? , user_password = AES_ENCRYPT( ? , '${ENC_KEY}') ` +
+        `WHERE user_name = ? AND user_password = AES_ENCRYPT( ? , '${ENC_KEY}');`;
     try {
         const [rows] = await db.execute(query, [
             user.new_user_name,
@@ -70,10 +70,10 @@ export async function handleUpdateUser(user, db) {
     }
 }
 export async function handleFetchUser(user_name, db) {
-    const query = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE user_name = ? ;`;
+    const query = `SELECT user_id, user_name FROM ${TABLE_NAME} WHERE user_name = ? LIMIT 1;`;
     try {
         const [rows] = await db.execute(query, [user_name]);
-        return rows;
+        return rows[0];
     }
     catch (err) {
         throw err;

@@ -1,4 +1,4 @@
-import type { Connection } from "mysql2/promise";
+import type { Connection, RowDataPacket } from "mysql2/promise";
 export declare function chkEmailValid(email: string, db: Connection): Promise<boolean>;
 export declare function chkUsernameValid(user_name: string, db: Connection): Promise<boolean>;
 export declare function handleUserRegister(user: {
@@ -7,14 +7,14 @@ export declare function handleUserRegister(user: {
     password: string;
 }, db: Connection): Promise<boolean>;
 export declare function handleLogin(user: {
-    user_name: string;
+    user_id: string;
     password: string;
-}, db: Connection): Promise<boolean>;
+}, name_or_email: "user_name" | "user_email", db: Connection): Promise<RowDataPacket | undefined>;
 export declare function handleUpdateUser(user: {
     new_user_name: string;
     old_user_name: string;
     old_password: string;
     new_password: string;
 }, db: Connection): Promise<boolean>;
-export declare function handleFetchUser(user_name: string, db: Connection): Promise<import("mysql2/promise").QueryResult>;
+export declare function handleFetchUser(user_name: string, db: Connection): Promise<RowDataPacket | undefined>;
 //# sourceMappingURL=user.d.ts.map

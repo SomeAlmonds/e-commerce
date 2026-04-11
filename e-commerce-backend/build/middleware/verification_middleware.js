@@ -13,11 +13,10 @@ export function verifyJwt(req, res, next) {
     }
     try {
         const decoded = verify(token, JWT_KEY);
-        req.user = { name: decoded.user_name };
+        req.user = { user_id: decoded.user_id, user_name: decoded.user_name };
         next();
     }
     catch (err) {
-        console.log(err);
         next(new AppError(403, "Invalid or expired token"));
     }
 }
