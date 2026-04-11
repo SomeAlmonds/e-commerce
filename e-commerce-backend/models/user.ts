@@ -43,15 +43,17 @@ export async function handleUserRegister(
   },
   db: Connection,
 ) {
+  const create_date = new Date();
   const query =
-    `INSERT INTO ${TABLE_NAME} (user_name, user_email, user_password)` +
-    `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
+    `INSERT INTO ${TABLE_NAME} (user_name, user_email, user_password, user_create_date)` +
+    `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'), ?);`;
 
   try {
     const [rows] = await db.execute<ResultSetHeader>(query, [
       user.user_name,
       user.email,
       user.password,
+      create_date,
     ]);
 
     return rows.affectedRows ? true : false;

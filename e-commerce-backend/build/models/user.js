@@ -25,13 +25,15 @@ export async function chkUsernameValid(user_name, db) {
     }
 }
 export async function handleUserRegister(user, db) {
-    const query = `INSERT INTO ${TABLE_NAME} (user_name, user_email, user_password)` +
-        `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'));`;
+    const create_date = new Date();
+    const query = `INSERT INTO ${TABLE_NAME} (user_name, user_email, user_password, user_create_date)` +
+        `VALUES (?, ?, AES_ENCRYPT(?, '${ENC_KEY}'), ?);`;
     try {
         const [rows] = await db.execute(query, [
             user.user_name,
             user.email,
             user.password,
+            create_date,
         ]);
         return rows.affectedRows ? true : false;
     }

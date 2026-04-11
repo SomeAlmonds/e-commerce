@@ -6,5 +6,6 @@ export const db = mysql.createPool({
   password: process.env.DB_PASSWORD as string,
   port: 21652,
   database: "defaultdb",
+  dateStrings: true,
   enableKeepAlive: true,
 });
