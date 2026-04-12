@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { db } from "../config/db.js";
-import { chkEmailValid, chkUsernameValid, handleFetchUser, handleLogin, handleUpdateUser, handleUserRegister, } from "../models/user.js";
+import UserModel from "../models/user_model.js";
 import { AppError } from "../utils/error_handler.js";
 import { validateInput } from "../middleware/input_validation_middleware.js";
 const sign = jwt.sign;
@@ -11,26 +11,18 @@ export async function registerUser(req, res, next) {
         return;
     }
     //
-    const user_name = req.body.name;
-    const user_email = req.body.email;
-    const user_pass = req.body.password;
+    const { name, email, password } = req.body;
     // look if user info (email and username) already exists
-    const valid_user_name = await chkUsernameValid(user_name, db);
-    if (!valid_user_name) {
+    if (!(await UserModel.validateName(name, db))) {
         return next(new AppError(409, "Username taken"));
     }
-    const valid_user_email = await chkEmailValid(user_email, db);
-    if (!valid_user_email) {
+    if (!(await UserModel.validateEmail(email, db))) {
         return next(new AppError(409, "Email already taken"));
     }
     //
     try {
-        const reg_valid = await handleUserRegister({
-            user_name,
-            email: user_email,
-            password: user_pass,
-        }, db);
-        if (reg_valid) {
+        const registered = await UserModel.register({ name, email, password }, db);
+        if (registered) {
             return res.status(201).json({ message: "User registered" });
         }
         else {
@@ -62,7 +54,7 @@ export async function login(req, res, next) {
     }
     //
     try {
-        const user = await handleLogin({ user_id, password }, name_or_email, db);
+        const user = await UserModel.login({ user_id, password }, name_or_email, db);
         if (user) {
             const token = sign(user, JWT_KEY, {
                 expiresIn: "24h",
@@ -85,7 +77,7 @@ export async function updateUser(req, res, next) {
     //
     const { old_name, old_password, new_name, new_password } = req.body;
     try {
-        const valid_user_name = await chkUsernameValid(new_name, db);
+        const valid_user_name = await UserModel.validateName(new_name, db);
         if (!valid_user_name) {
             return next(new AppError(409, "Username taken"));
         }
@@ -94,7 +86,7 @@ export async function updateUser(req, res, next) {
         return next(err);
     }
     try {
-        const updated_user = await handleUpdateUser({
+        const updated_user = await UserModel.update({
             old_name,
             old_password,
             new_name,
@@ -119,7 +111,7 @@ export async function getUserByName(req, res, next) {
     }
     //
     try {
-        const user = await handleFetchUser(req.params.user, db);
+        const user = await UserModel.getByName(req.params.user, db);
         if (!user) {
             return next(new AppError(404, "User not found"));
         }
