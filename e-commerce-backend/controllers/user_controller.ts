@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { db } from "../config/db.js";
-import UserModel from "../models/user_model.js";
+import UserModel from "../models/users_model.js";
 import { AppError } from "../utils/error_handler.js";
 import { validateInput } from "../middleware/input_validation_middleware.js";
 

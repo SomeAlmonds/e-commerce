@@ -1,6 +1,6 @@
 import { AppError } from "../utils/error_handler.js";
 export default class UserModel {
-    static TABLE_NAME = "users";
+    static table_name = "users";
     static ENC_KEY = process.env.ENC_KEY;
     /**
      * Checks if the provided user name already exists in the database
@@ -10,7 +10,7 @@ export default class UserModel {
      * @throws An error if there was a problem querying the db
      */
     static async validateEmail(email, db) {
-        const query = `SELECT 1 FROM ${this.TABLE_NAME} WHERE user_email = ?;`;
+        const query = `SELECT 1 FROM ${this.table_name} WHERE user_email = ?;`;
         try {
             const [rows] = await db.execute(query, [email]);
             // return false if user name already exists
@@ -28,7 +28,7 @@ export default class UserModel {
      * @throws An error if there was a problem querying the db
      */
     static async validateName(name, db) {
-        const query = `SELECT 1 FROM ${this.TABLE_NAME} WHERE user_name = ?;`;
+        const query = `SELECT 1 FROM ${this.table_name} WHERE user_name = ?;`;
         try {
             const [rows] = await db.execute(query, [name]);
             // return false if user name already exists
@@ -47,7 +47,7 @@ export default class UserModel {
      */
     static async register(user, db) {
         const create_date = new Date();
-        const query = `INSERT INTO ${this.TABLE_NAME} (user_name, user_email, user_password, user_create_date)` +
+        const query = `INSERT INTO ${this.table_name} (user_name, user_email, user_password, user_create_date)` +
             `VALUES (?, ?, AES_ENCRYPT(?, '${this.ENC_KEY}'), ?);`;
         try {
             const [rows] = await db.execute(query, [
@@ -71,7 +71,7 @@ export default class UserModel {
      * @throws An error if there was a problem querying the db
      */
     static async login(user, name_or_email, db) {
-        const query = `SELECT user_id, user_name FROM ${this.TABLE_NAME} WHERE` +
+        const query = `SELECT user_id, user_name FROM ${this.table_name} WHERE` +
             ` ${name_or_email} = ? AND user_password = AES_ENCRYPT(?, '${this.ENC_KEY}');`;
         try {
             const [rows] = await db.execute(query, [
@@ -96,7 +96,7 @@ export default class UserModel {
         if (!user.new_name && !user.new_password) {
             throw new AppError(400, "Either new_name or new_password required");
         }
-        const query = `UPDATE ${this.TABLE_NAME} SET user_name = ? , user_password = AES_ENCRYPT( ? , '${this.ENC_KEY}')  ` +
+        const query = `UPDATE ${this.table_name} SET user_name = ? , user_password = AES_ENCRYPT( ? , '${this.ENC_KEY}')  ` +
             `WHERE user_name = ? AND user_password = AES_ENCRYPT( ? , '${this.ENC_KEY}');`;
         const values_arr = [user.old_name, user.old_password];
         // if value = undifined use old_val instead so that it changes to the same thing
@@ -107,7 +107,7 @@ export default class UserModel {
         try {
             const [rows] = await db.execute(query, [values_arr]);
             if (rows.affectedRows) {
-                const query_2 = `SELECT user_id, user_name FROM ${this.TABLE_NAME} ` +
+                const query_2 = `SELECT user_id, user_name FROM ${this.table_name} ` +
                     `WHERE user_name = ? AND user_password = AES_ENCRYPT( ? , '${this.ENC_KEY}');`;
                 const [rows_2] = await db.execute(query_2, [
                     user.new_name ? user.new_name : user.old_name,
@@ -131,7 +131,7 @@ export default class UserModel {
      * @throws An error if there was a problem querying the db
      */
     static async getByName(name, db) {
-        const query = `SELECT user_id, user_name FROM ${this.TABLE_NAME} WHERE user_name = ? LIMIT 1;`;
+        const query = `SELECT user_id, user_name FROM ${this.table_name} WHERE user_name = ? LIMIT 1;`;
         try {
             const [rows] = await db.execute(query, [name]);
             return rows[0] ? rows[0] : undefined;

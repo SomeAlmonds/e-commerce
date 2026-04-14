@@ -1,6 +1,6 @@
 import type { Connection, RowDataPacket } from "mysql2/promise";
 export default class UserModel {
-    static TABLE_NAME: string;
+    static table_name: string;
     static ENC_KEY: string | undefined;
     /**
      * Checks if the provided user name already exists in the database
