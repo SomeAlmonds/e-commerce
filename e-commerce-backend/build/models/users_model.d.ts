@@ -34,7 +34,7 @@ export default class UserModel {
      * @param user - {user_id: user name or email string, password: string}
      * @param name_or_email "user_name" or "user_email" to indecate which is used
      * @param {Connection} db Database connection
-     * @returns RowDataPacket {user_id, user_name} if a match is found, or undefined if not
+     * @returns RowDataPacket {user_id, user_name} if a match is found
      * @throws An error if there was a problem querying the db
      */
     static login(user: {
@@ -45,7 +45,7 @@ export default class UserModel {
      * Cheks for user match and updates name and/or password
      * @param user User object with string properties {old_name, old_password new_name, new_password}
      * @param {Connection} db Database connection
-     * @returns Updated user RowDataPacket {user_id, user_name} if a match was found and updated, undifined if not
+     * @returns Updated user RowDataPacket {user_id, user_name} if a match was found and updated
      * @throws AppError if both new_name and new_password are undifined
      * @throws An error if there was a problem querying the db
      */
@@ -59,7 +59,7 @@ export default class UserModel {
      * Searchs for a user name matchc in the database and returns the user
      * @param {string} name User name
      * @param {Connection} db Database connection
-     * @returns RowDataPacket {user_id, user_name} if a match was found, undifined if not
+     * @returns RowDataPacket {user_id, user_name} if a match was found
      * @throws An error if there was a problem querying the db
      */
     static getByName(name: string, db: Connection): Promise<RowDataPacket | undefined>;

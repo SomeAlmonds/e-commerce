@@ -1,6 +1,13 @@
 import ProductModel from "./products_model.js";
 export default class ReviewModel {
     static #table_name = "reviews";
+    /**
+     * Gets all the reviews for a specific product
+     * @param product_id number
+     * @param db Database connection
+     * @returns review array
+     * @throws An error if there was a problem querying the db
+     */
     static async getProductReviews(product_id, db) {
         const query = `SELECT * FROM ${this.#table_name} WHERE product_id = ?`;
         try {
@@ -11,6 +18,13 @@ export default class ReviewModel {
             throw err;
         }
     }
+    /**
+     * Gets all the reviews made by a specific user
+     * @param user_id number
+     * @param db Database connection
+     * @returns review array
+     * @throws An error if there was a problem querying the db
+     */
     static async getUserReviews(user_id, db) {
         const query = `SELECT * FROM ${this.#table_name} WHERE user_id = ?`;
         try {
@@ -27,6 +41,7 @@ export default class ReviewModel {
      * @param review Obj { product_id: number, user_id: number, review_txt: string, review_stars: number }
      * @param db Database connection
      * @returns True if inserted, false if not
+     * @throws An error if there was a problem querying the db
      */
     static async insertReview(review, db) {
         const query = `INSERT INTO ${this.#table_name} (product_id, user_id, review_txt, review_stars) ` +

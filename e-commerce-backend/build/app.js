@@ -1,5 +1,5 @@
 import express from "express";
-import userRouter from "./routes/user_route.js";
+import userRouter from "./routes/users_route.js";
 import helmet from "helmet";
 import cors from "cors";
 const app = express();

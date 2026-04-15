@@ -1,13 +1,9 @@
 import express from "express";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import UserController from "../controllers/users_controller.js";
 import errorHandler from "../middleware/error_middleware.js";
 import Verification from "../middleware/verification_middleware.js";
 const userRouter = express.Router();
-userRouter.use((req, res, next) => {
-    res.setHeader("Content-type", "application/json");
-    return next();
-});
 userRouter.post("/register", [
     body("name")
         .isString()
@@ -61,7 +57,7 @@ userRouter.put("/update", [
         .notEmpty()
         .withMessage("password"),
 ], Verification.verifyJwt, UserController.updateUser);
-userRouter.get("/:user", Verification.verifyJwt, UserController.getUserByName);
+userRouter.get("/:user", [param(":user").isLength({ min: 3 }).isString().notEmpty().trim().escape()], Verification.verifyJwt, UserController.getUserByName);
 userRouter.use(errorHandler);
 export default userRouter;
-//# sourceMappingURL=user_route.js.map
+//# sourceMappingURL=users_route.js.map

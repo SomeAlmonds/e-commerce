@@ -1,20 +1,10 @@
 import express from "express";
-import { body } from "express-validator";
-import {
-  getUserByName,
-  login,
-  registerUser,
-  updateUser,
-} from "../controllers/user_controller.js";
+import { body, param } from "express-validator";
+import UserController from "../controllers/users_controller.js";
 import errorHandler from "../middleware/error_middleware.js";
-import { verifyJwt } from "../middleware/verification_middleware.js";
+import Verification from "../middleware/verification_middleware.js";
 
 const userRouter = express.Router();
-
-userRouter.use((req, res, next) => {
-  res.setHeader("Content-type", "application/json");
-  return next();
-});
 
 userRouter.post(
   "/register",
@@ -40,7 +30,7 @@ userRouter.post(
       .notEmpty()
       .withMessage("email"),
   ],
-  registerUser,
+  UserController.registerUser,
 );
 
 userRouter.post(
@@ -60,7 +50,7 @@ userRouter.post(
       .withMessage("password"),
     body("email").optional().isEmail().normalizeEmail().withMessage("email"),
   ],
-  login,
+  UserController.login,
 );
 
 userRouter.put(
@@ -81,11 +71,16 @@ userRouter.put(
       .notEmpty()
       .withMessage("password"),
   ],
-  verifyJwt,
-  updateUser,
+  Verification.verifyJwt,
+  UserController.updateUser,
 );
 
-userRouter.get("/:user", verifyJwt, getUserByName);
+userRouter.get(
+  "/:user",
+  [param(":user").isLength({ min: 3 }).isString().notEmpty().trim().escape()],
+  Verification.verifyJwt,
+  UserController.getUserByName,
+);
 
 userRouter.use(errorHandler);
 
