@@ -17,6 +17,7 @@
 
     // current proj dev note: fixing import compatability
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     // Other Outputs
     "sourceMap": true,
