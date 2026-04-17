@@ -15,6 +15,9 @@
     "types": ["node", "mysql"],
     // and npm install -D @types/node
 
+    // current proj dev note: fixing import compatability
+    "esModuleInterop": true,
+
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
@@ -39,6 +42,6 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   }
 }
