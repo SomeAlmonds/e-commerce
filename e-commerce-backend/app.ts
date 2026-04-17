@@ -34,11 +34,11 @@ const cors_options = {
 
 ///////// MIDDLEWARE //////////
 
+app.use(helmet());
+app.use(cors(cors_options));
 app.use(express.json());
 app.use(rateLimiter);
 app.use(speedLimiter);
-app.use(helmet());
-app.use(cors(cors_options));
 
 ///////////////////////////////
 
