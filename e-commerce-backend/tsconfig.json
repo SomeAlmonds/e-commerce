@@ -9,15 +9,12 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
+    "moduleResolution": "nodenext",
     // "types": [],
     // For nodejs:
     // "lib": ["esnext"],
     "types": ["node", "mysql"],
     // and npm install -D @types/node
-
-    // current proj dev note: fixing import compatability
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
 
     // Other Outputs
     "sourceMap": true,
