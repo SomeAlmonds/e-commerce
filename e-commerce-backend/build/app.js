@@ -1,6 +1,6 @@
 import express from "express";
-import rateLimit from "express-rate-limit";
-import slowDown from "express-slow-down";
+import { rateLimit } from "express-rate-limit";
+import { slowDown } from "express-slow-down";
 import helmet from "helmet";
 import cors from "cors";
 import usersRouter from "./routes/users_route.js";
