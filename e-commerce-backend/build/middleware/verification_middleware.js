@@ -1,4 +1,4 @@
-import jwt, {} from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { AppError } from "../utils/error_handler.js";
 export default class Verification {
     static #verify = jwt.verify;
