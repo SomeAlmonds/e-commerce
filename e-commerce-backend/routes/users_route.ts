@@ -1,12 +1,12 @@
 import express from "express";
 import { body, param } from "express-validator";
-import UserController from "../controllers/users_controller.js";
+import UsersController from "../controllers/users_controller.js";
 import errorHandler from "../middleware/error_middleware.js";
 import Verification from "../middleware/verification_middleware.js";
 
-const userRouter = express.Router();
+const usersRouter = express.Router();
 
-userRouter.post(
+usersRouter.post(
   "/register",
   [
     body("name")
@@ -30,10 +30,10 @@ userRouter.post(
       .notEmpty()
       .withMessage("email"),
   ],
-  UserController.registerUser,
+  UsersController.registerUser,
 );
 
-userRouter.post(
+usersRouter.post(
   "/login",
   [
     body("name")
@@ -50,10 +50,10 @@ userRouter.post(
       .withMessage("password"),
     body("email").optional().isEmail().normalizeEmail().withMessage("email"),
   ],
-  UserController.login,
+  UsersController.login,
 );
 
-userRouter.put(
+usersRouter.put(
   "/update",
   [
     body(["new_name", "old_name"])
@@ -72,16 +72,16 @@ userRouter.put(
       .withMessage("password"),
   ],
   Verification.verifyJwt,
-  UserController.updateUser,
+  UsersController.updateUser,
 );
 
-userRouter.get(
+usersRouter.get(
   "/:user",
   [param(":user").isLength({ min: 3 }).isString().notEmpty().trim().escape()],
   Verification.verifyJwt,
-  UserController.getUserByName,
+  UsersController.getUserByName,
 );
 
-userRouter.use(errorHandler);
+usersRouter.use(errorHandler);
 
-export default userRouter;
+export default usersRouter;

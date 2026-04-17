@@ -1,5 +1,5 @@
 import type { Connection, RowDataPacket } from "mysql2/promise";
-export default class UserModel {
+export default class UsersModel {
     #private;
     /**
      * Checks if the provided user name already exists in the database

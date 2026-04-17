@@ -3,7 +3,7 @@ import type {
   Connection,
   ResultSetHeader,
 } from "mysql2/promise";
-import ProductModel from "./products_model.js";
+import ProductsModel from "./products_model.js";
 
 export interface review {
   review_id?: number;
@@ -13,7 +13,7 @@ export interface review {
   review_stars: number;
 }
 
-export default class ReviewModel {
+export default class ReviewsModel {
   static #table_name = "reviews";
 
   /**
@@ -74,7 +74,7 @@ export default class ReviewModel {
 
       if (rows.affectedRows) {
         try {
-          await ProductModel.updateProductRating(review.product_id, db);
+          await ProductsModel.updateProductRating(review.product_id, db);
           return true;
         } catch (err) {
           throw err;

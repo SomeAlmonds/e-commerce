@@ -8,7 +8,7 @@ export interface product {
     product_rating_avg?: number;
     product_rating_count?: number;
 }
-export default class ProductModel {
+export default class ProductsModel {
     #private;
     /**
      * Gets a range of products with the provided offset
@@ -20,34 +20,19 @@ export default class ProductModel {
      */
     static getAllProducts(limit: number, offset: number, db: Connection): Promise<product[]>;
     /**
-     * Search for product names that contain a match for the provided string.
-     * @param product_name string
-     * @param db Database connection
-     * @returns product array
-     * @throws An error if there was a problem querying the db
-     */
-    static getProductsByName(product_name: string, db: Connection): Promise<product[]>;
-    /**
      * Gets products based on the provieded filters
      * NOTE: the filters object keys should be named exactly the same as mentioned for the method to work
-     * @param filters Obj {product_category: string, product_rating: number, min_price: number, max_price: number}
+     * @param filters Obj {product_name: string, product_category: string, product_rating: number, min_price: number, max_price: number}
      * @param db Database connection
      * @returns product array
      */
     static getFilteredPorducts(filters: {
+        product_name?: string;
         product_category?: string;
         product_rating?: number;
         min_price?: number;
         max_price?: number;
-    }, db: Connection): Promise<product[]>;
-    /**
-     * Gets products based on their category.
-     * @param product_category string
-     * @param db Database connection
-     * @returns product array
-     * @throws An error if there was a problem querying the db
-     */
-    static getProductsByCategory(product_category: string, db: Connection): Promise<product[]>;
+    }, offset: number, limit: number, db: Connection): Promise<product[]>;
     /**
      * Gets a product from the database by its Id
      * @param product_id number

@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 import { db } from "../config/db.js";
-import UserModel from "../models/users_model.js";
+import validateInput from "../middleware/input_validation_middleware.js";
+import UsersModel from "../models/users_model.js";
 import { AppError } from "../utils/error_handler.js";
-import { validateInput } from "../middleware/input_validation_middleware.js";
-export default class UserController {
+export default class UsersController {
     static #sign = jwt.sign;
     static #JWT_KEY = process.env.JWT_KEY;
     static async registerUser(req, res, next) {
@@ -14,15 +14,15 @@ export default class UserController {
         //
         const { name, email, password } = req.body;
         // look if user info (email and username) already exists
-        if (!(await UserModel.validateName(name, db))) {
+        if (!(await UsersModel.validateName(name, db))) {
             return next(new AppError(409, "Username taken"));
         }
-        if (!(await UserModel.validateEmail(email, db))) {
+        if (!(await UsersModel.validateEmail(email, db))) {
             return next(new AppError(409, "Email already taken"));
         }
         //
         try {
-            const registered = await UserModel.register({ name, email, password }, db);
+            const registered = await UsersModel.register({ name, email, password }, db);
             if (registered) {
                 return res.status(201).json({ message: "User registered" });
             }
@@ -55,7 +55,7 @@ export default class UserController {
         }
         //
         try {
-            const user = await UserModel.login({ user_id, password }, name_or_email, db);
+            const user = await UsersModel.login({ user_id, password }, name_or_email, db);
             if (user) {
                 const token = this.#sign(user, this.#JWT_KEY, {
                     expiresIn: "24h",
@@ -80,23 +80,23 @@ export default class UserController {
         //
         const { old_name, old_password, new_name, new_password } = req.body;
         try {
-            const valid_user_name = await UserModel.validateName(new_name, db);
+            const valid_user_name = await UsersModel.validateName(new_name, db);
             if (!valid_user_name) {
-                return next(new AppError(409, "Username taken"));
+                throw new AppError(409, "Username taken");
             }
         }
         catch (err) {
             return next(err);
         }
         try {
-            const updated_user = await UserModel.update({
+            const updated_user = await UsersModel.update({
                 old_name,
                 old_password,
                 new_name,
                 new_password,
             }, db);
             if (!updated_user) {
-                return next(new AppError(403, "Incorrect user name or password"));
+                throw new AppError(403, "Incorrect user name or password");
             }
             const token = this.#sign(updated_user, this.#JWT_KEY, {
                 expiresIn: "24h",
@@ -114,9 +114,9 @@ export default class UserController {
         }
         //
         try {
-            const user = await UserModel.getByName(req.params.user, db);
+            const user = await UsersModel.getByName(req.params.user, db);
             if (!user) {
-                return next(new AppError(404, "User not found"));
+                throw new AppError(404, "User not found");
             }
             return res.status(200).json({
                 message: "Success",

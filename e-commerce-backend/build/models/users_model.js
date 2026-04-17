@@ -1,5 +1,5 @@
 import { AppError } from "../utils/error_handler.js";
-export default class UserModel {
+export default class UsersModel {
     static #table_name = "users";
     static #ENC_KEY = process.env.ENC_KEY;
     /**

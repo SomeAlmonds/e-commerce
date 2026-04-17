@@ -1,5 +1,5 @@
-import ReviewModel from "./reviews_model.js";
-export default class ProductModel {
+import ReviewsModel from "./reviews_model.js";
+export default class ProductsModel {
     static #table_name = "products";
     /**
      * Gets a range of products with the provided offset
@@ -20,71 +20,40 @@ export default class ProductModel {
         }
     }
     /**
-     * Search for product names that contain a match for the provided string.
-     * @param product_name string
-     * @param db Database connection
-     * @returns product array
-     * @throws An error if there was a problem querying the db
-     */
-    static async getProductsByName(product_name, db) {
-        const query = `SELECT * FROM ${this.#table_name} WHERE product_name LIKE '%?%'`;
-        try {
-            const [rows] = await db.execute(query, [product_name]);
-            return rows;
-        }
-        catch (err) {
-            throw err;
-        }
-    }
-    /**
      * Gets products based on the provieded filters
      * NOTE: the filters object keys should be named exactly the same as mentioned for the method to work
-     * @param filters Obj {product_category: string, product_rating: number, min_price: number, max_price: number}
+     * @param filters Obj {product_name: string, product_category: string, product_rating: number, min_price: number, max_price: number}
      * @param db Database connection
      * @returns product array
      */
-    static async getFilteredPorducts(filters, db) {
+    static async getFilteredPorducts(filters, offset, limit, db) {
         const values = [];
+        const foo = {
+            product_category: "=",
+            product_rating: ">",
+            min_price: ">=",
+            max_price: "<=",
+        };
         let query = `SELECT * FROM ${this.#table_name} WHERE `;
         Object.keys(filters).forEach((key, i) => {
             if (filters[key]) {
-                if ((key = "min_pric")) {
-                    query += `product_price >= ?`;
-                    values.push(filters.min_price);
-                }
-                else if ((key = "max_price")) {
-                    query += `product_price <= ?`;
-                    values.push(filters.max_price);
-                }
-                else {
-                    query += `${key} = ?`;
-                    values.push(filters[key]);
+                switch (key) {
+                    case "product_name":
+                        query += `product_name LIKE %?%`;
+                        values.push(filters.product_name);
+                        return;
+                    default:
+                        query += `${key} ${foo[key]} ?`;
+                        values.push(filters[key]);
                 }
                 if (i < this.length - 1)
                     query += ` AND `;
             }
         });
+        query += ` LIMIT ? OFFSET ?`;
+        values.push(limit, offset);
         try {
             const [rows] = await db.execute(query, values);
-            return rows;
-        }
-        catch (err) {
-            throw err;
-        }
-    }
-    /**
-     * Gets products based on their category.
-     * @param product_category string
-     * @param db Database connection
-     * @returns product array
-     * @throws An error if there was a problem querying the db
-     */
-    static async getProductsByCategory(product_category, db) {
-        const query = `SELECT * FROM ${this.#table_name} WHERE product_category = ?`;
-        try {
-            const [rows] = await db.execute(query, [
-                product_category,
-            ]);
             return rows;
         }
         catch (err) {
@@ -117,7 +86,7 @@ export default class ProductModel {
      * @throws An error if there was a problem querying the db
      */
     static async updateProductRating(product_id, db) {
-        const prod_reviews = await ReviewModel.getProductReviews(product_id, db);
+        const prod_reviews = await ReviewsModel.getProductReviews(product_id, db);
         // get product reviews average
         const ratings = prod_reviews.map((rev) => rev.review_stars);
         const rating_avg = (ratings.reduce((a, b) => a + b) / ratings.length).toFixed(2);

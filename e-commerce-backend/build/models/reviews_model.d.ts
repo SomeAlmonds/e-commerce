@@ -6,7 +6,7 @@ export interface review {
     review_txt: string;
     review_stars: number;
 }
-export default class ReviewModel {
+export default class ReviewsModel {
     #private;
     /**
      * Gets all the reviews for a specific product

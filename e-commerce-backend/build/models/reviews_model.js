@@ -1,5 +1,5 @@
-import ProductModel from "./products_model.js";
-export default class ReviewModel {
+import ProductsModel from "./products_model.js";
+export default class ReviewsModel {
     static #table_name = "reviews";
     /**
      * Gets all the reviews for a specific product
@@ -52,7 +52,7 @@ export default class ReviewModel {
             ]);
             if (rows.affectedRows) {
                 try {
-                    await ProductModel.updateProductRating(review.product_id, db);
+                    await ProductsModel.updateProductRating(review.product_id, db);
                     return true;
                 }
                 catch (err) {

@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { AppError } from "../utils/error_handler.js";
-export function validateInput(req, res, next) {
+export default function validateInput(req, res, next) {
     // general checks
     const validation_errs = validationResult(req);
     if (!validation_errs.isEmpty()) {
@@ -8,6 +8,7 @@ export function validateInput(req, res, next) {
         next(new AppError(400, err_msg_array.join(", ")));
         return 0;
     }
+    //
     // Path specific checks
     if (req.path == "/login") {
         if (!req.body.name && !req.body.email) {
@@ -15,6 +16,14 @@ export function validateInput(req, res, next) {
             return 0;
         }
     }
+    if (req.path == "/filter") {
+        const queries = req.query;
+        if (Object.values(queries).every((val) => val == undefined)) {
+            next(new AppError(400, "All filters are empty, at least one filter requiered"));
+            return 0;
+        }
+    }
+    //
     return 1;
 }
 //# sourceMappingURL=input_validation_middleware.js.map

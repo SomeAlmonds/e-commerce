@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
-import { validateInput } from "../middleware/input_validation_middleware.js";
-import ProductModel from "../models/products_model.js";
 import { db } from "../config/db.js";
+import validateInput from "../middleware/input_validation_middleware.js";
+import ProductsModel from "../models/products_model.js";
 import { AppError } from "../utils/error_handler.js";
 
-export default class ProductController {
+export default class ProductsController {
   static async getProducts(req: Request, res: Response, next: NextFunction) {
     // validate input
     if (!validateInput(req, res, next)) {
@@ -12,13 +12,13 @@ export default class ProductController {
     }
     //
 
-    const offset = Number(req.query.page) * 20;
+    const offset = ((Number(req.query.page) || 0) - 1) * 20;
 
     try {
-      const products = await ProductModel.getAllProducts(20, offset, db);
+      const products = await ProductsModel.getAllProducts(20, offset, db);
 
       if (!products) {
-        next(new AppError(404, "No product found"));
+        return next(new AppError(404, "No products found"));
       }
 
       return res.status(200).json({ message: "Success", data: { products } });
@@ -35,7 +35,7 @@ export default class ProductController {
     //
 
     try {
-      const product = await ProductModel.getProductById(
+      const product = await ProductsModel.getProductById(
         Number(req.params.product_id),
         db,
       );
@@ -45,6 +45,51 @@ export default class ProductController {
       }
 
       return res.status(200).json({ message: "Success", data: { product } });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getFilteredProducts(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    // validate input
+    if (!validateInput(req, res, next)) {
+      return;
+    }
+    //
+
+    const offset = ((Number(req.query.page) || 0) - 1) * 20;
+
+    const {
+      product_name,
+      product_category,
+      product_rating,
+      min_price,
+      max_price,
+    } = req.query;
+
+    try {
+      const products = await ProductsModel.getFilteredPorducts(
+        {
+          product_name,
+          product_category,
+          product_rating,
+          min_price,
+          max_price,
+        } as Record<string, string | number>,
+        offset,
+        20,
+        db,
+      );
+
+      if (!products) {
+        return next(new AppError(404, "No products found"));
+      }
+
+      return res.status(200).json({ message: "Success", data: { products } });
     } catch (err) {
       next(err);
     }

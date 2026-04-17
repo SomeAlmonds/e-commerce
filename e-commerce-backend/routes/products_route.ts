@@ -1,22 +1,38 @@
 import Express from "express";
-import errorHandler from "../middleware/error_middleware.js";
 import { param, query } from "express-validator";
-import ProductController from "../controllers/products_controller.js";
+import ProductsController from "../controllers/products_controller.js";
+import errorHandler from "../middleware/error_middleware.js";
 
-const productRouter = Express.Router();
+const productsRouter = Express.Router();
 
-productRouter.get(
+productsRouter.get(
   "/",
-  [query("page").isNumeric().notEmpty()],
-  ProductController.getProducts,
+  [query("page").isNumeric().notEmpty().trim().escape()],
+  ProductsController.getProducts,
 );
 
-productRouter.get(
+productsRouter.get(
   "/:product_id",
   [param("product_id").isNumeric().notEmpty()],
-  ProductController.getProductById,
+  ProductsController.getProductById,
 );
 
-productRouter.use(errorHandler);
+productsRouter.get(
+  "/filter",
+  [
+    query("page").isNumeric().notEmpty().trim().escape(),
+    query("product_name").isString().notEmpty().optional().escape().trim(),
+    query("product_category").isString().notEmpty().optional().escape().trim(),
+    query(["product_rating", "min_price", "max_price"])
+      .isNumeric()
+      .notEmpty()
+      .optional()
+      .escape()
+      .trim(),
+  ],
+  ProductsController.getFilteredProducts,
+);
 
-export default productRouter;
+productsRouter.use(errorHandler);
+
+export default productsRouter;
