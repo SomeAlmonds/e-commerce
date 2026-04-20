@@ -15,8 +15,6 @@
     // "lib": ["esnext"],
     // and npm install -D @types/node
 
-    "esModuleInterop": true,
-
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
