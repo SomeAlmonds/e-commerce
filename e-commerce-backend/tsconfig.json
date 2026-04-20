@@ -15,6 +15,8 @@
     // "lib": ["esnext"],
     // and npm install -D @types/node
 
+    "esModuleInterop": true,
+
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
@@ -36,7 +38,7 @@
     "strict": true,
     "jsx": "react-jsx",
     "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "skipLibCheck": true
+    "noUncheckedSideEffectImports": true
+    // "skipLibCheck": true
   }
 }

@@ -8,7 +8,6 @@ import productsRouter from "./routes/products_route.js";
 import reviewsRouter from "./routes/reviews_route.js";
 
 const app = express();
-app.use(helmet());
 const PORT = process.env.PORT;
 
 ////// MIDDLEWARE CONFIG //////
@@ -35,6 +34,7 @@ const cors_options = {
 
 ///////// MIDDLEWARE //////////
 
+app.use(helmet());
 app.use(cors(cors_options));
 app.use(express.json());
 app.use(rateLimiter);
