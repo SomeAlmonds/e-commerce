@@ -10,11 +10,12 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "esnext",
-    // "types": [],
+    "types": ["node", "mysql"],
     // For nodejs:
     // "lib": ["esnext"],
-    "types": ["node", "mysql"],
     // and npm install -D @types/node
+
+    "esModuleInterop": true,
 
     // Other Outputs
     "sourceMap": true,
