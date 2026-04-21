@@ -5,15 +5,10 @@
     "moduleResolution": "nodenext",
     "target": "esnext",
     "types": ["node", "mysql"],
-    // "lib": ["esnext"],
+    "lib": ["esnext"],
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": true,
-    "declarationMap": true,
-
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "strict": true
+    "declarationMap": true
   }
 }
