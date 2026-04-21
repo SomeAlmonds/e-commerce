@@ -1,7 +1,7 @@
 import express from "express";
 import { body, param } from "express-validator";
-import ReviewsController from "../controllers/reviews_controller.js";
-import errorHandler from "../middleware/error_middleware.js";
+import ReviewsController from "../src/controllers/reviews_controller.js";
+import errorHandler from "../src/middleware/error_middleware.js";
 
 const reviewsRouter = express.Router();
 

@@ -1,7 +1,7 @@
 import Express from "express";
 import { param, query } from "express-validator";
-import ProductsController from "../controllers/products_controller.js";
-import errorHandler from "../middleware/error_middleware.js";
+import ProductsController from "../src/controllers/products_controller.js";
+import errorHandler from "../src/middleware/error_middleware.js";
 
 const productsRouter = Express.Router();
 
