@@ -1,8 +1,7 @@
 import express from "express";
 import { rateLimit } from "express-rate-limit";
 import { slowDown } from "express-slow-down";
-// import helmet from "helmet";
-const helmet = require("helmet");
+import helmet from "helmet";
 import cors from "cors";
 import usersRouter from "./routes/users_route.js";
 import productsRouter from "./routes/products_route.js";
