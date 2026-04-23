@@ -15,7 +15,7 @@ const PORT = process.env.PORT;
 const rateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   // temp values
-  limit: 1,
+  limit: 30,
 });
 
 const speedLimiter = slowDown({
@@ -25,7 +25,7 @@ const speedLimiter = slowDown({
 });
 
 const cors_options = {
-  origin: "https://e-commerce-khaki-six.vercel.app/",
+  origin: "https://e-commerce-khaki-six.vercel.app",
   methods: ["Get", "Post", "Put"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };

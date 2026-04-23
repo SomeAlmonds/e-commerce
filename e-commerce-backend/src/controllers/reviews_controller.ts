@@ -22,7 +22,7 @@ export default class ReviewsController {
         db,
       );
 
-      if (!reviews) {
+      if (!reviews.length) {
         throw new AppError(404, "No reviews found");
       }
 
@@ -45,7 +45,7 @@ export default class ReviewsController {
         db,
       );
 
-      if (!reviews) {
+      if (!reviews.length) {
         throw new AppError(404, "No reviews found");
       }
 
@@ -62,8 +62,18 @@ export default class ReviewsController {
     }
     //
 
+    const { product_id, user_id, review_txt, review_stars } = req.body;
     try {
-      const inserted = await ReviewsModel.insertReview(req.body, db);
+      const inserted = await ReviewsModel.insertReview(
+        {
+          product_id,
+          user_id,
+          review_txt,
+          review_stars,
+          review_date: new Date(),
+        },
+        db,
+      );
 
       if (!inserted) {
         throw new AppError(500, "Somthing went wrong");

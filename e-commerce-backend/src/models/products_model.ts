@@ -29,7 +29,7 @@ export default class ProductsModel {
     const query = `SELECT * FROM ${this.#table_name} LIMIT ? OFFSET ?`;
 
     try {
-      const [rows] = await db.execute<RowDataPacket[]>(query, [limit, offset]);
+      const [rows] = await db.query<RowDataPacket[]>(query, [limit, offset]);
 
       return rows as product[];
     } catch (err) {
@@ -57,9 +57,9 @@ export default class ProductsModel {
     db: Connection,
   ) {
     const values: any[] = [];
-    const foo = {
+    const operators = {
       product_category: "=",
-      product_rating: ">",
+      product_rating: ">=",
       min_price: ">=",
       max_price: "<=",
     };
@@ -69,11 +69,20 @@ export default class ProductsModel {
       if (filters[key as keyof typeof filters]) {
         switch (key) {
           case "product_name":
-            query += `product_name LIKE %?%`;
-            values.push(filters.product_name);
-            return;
+            query += `product_name LIKE ?`;
+            values.push("%" + filters.product_name + "%");
+            break;
+          case "min_price":
+          case "max_price":
+            query += `product_price ${operators[key as keyof typeof operators]} ?`;
+            values.push(filters[key as keyof typeof filters]);
+            break;
+          case "product_rating":
+            query += `product_rating_avg ${operators[key as keyof typeof operators]} ?`;
+            values.push(filters[key as keyof typeof filters]);
+            break;
           default:
-            query += `${key} ${foo[key as keyof typeof foo]} ?`;
+            query += `${key} ${operators[key as keyof typeof operators]} ?`;
             values.push(filters[key as keyof typeof filters]);
         }
 
@@ -85,7 +94,7 @@ export default class ProductsModel {
     values.push(limit, offset);
 
     try {
-      const [rows] = await db.execute<RowDataPacket[]>(query, values);
+      const [rows] = await db.query<RowDataPacket[]>(query, values);
 
       return rows as product[];
     } catch (err) {
@@ -124,7 +133,7 @@ export default class ProductsModel {
     const prod_reviews = await ReviewsModel.getProductReviews(product_id, db);
 
     // get product reviews average
-    const ratings = prod_reviews.map((rev) => rev.review_stars);
+    const ratings = prod_reviews.map((rev) => Number(rev.review_stars));
     const rating_avg = (
       ratings.reduce((a, b) => a + b) / ratings.length
     ).toFixed(2);

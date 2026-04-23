@@ -11,6 +11,7 @@ export interface review {
   product_id: number;
   review_txt: string;
   review_stars: number;
+  review_date: Date;
 }
 
 export default class ReviewsModel {
@@ -64,11 +65,11 @@ export default class ReviewsModel {
    */
   static async insertReview(review: review, db: Connection) {
     const query =
-      `INSERT INTO ${this.#table_name} (product_id, user_id, review_txt, review_stars) ` +
-      `VALUES ?`;
+      `INSERT INTO ${this.#table_name} (product_id, user_id, review_txt, review_stars, review_date) ` +
+      `VALUES (?)`;
 
     try {
-      const [rows] = await db.execute<ResultSetHeader>(query, [
+      const [rows] = await db.query<ResultSetHeader>(query, [
         Object.values(review),
       ]);
 

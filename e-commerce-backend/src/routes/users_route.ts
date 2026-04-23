@@ -1,8 +1,8 @@
 import express from "express";
 import { body, param } from "express-validator";
-import UsersController from "../src/controllers/users_controller.js";
-import errorHandler from "../src/middleware/error_middleware.js";
-import Verification from "../src/middleware/verification_middleware.js";
+import UsersController from "../controllers/users_controller.js";
+import errorHandler from "../middleware/error_middleware.js";
+import Verification from "../middleware/verification_middleware.js";
 
 const usersRouter = express.Router();
 

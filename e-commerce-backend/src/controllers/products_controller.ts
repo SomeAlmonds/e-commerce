@@ -13,11 +13,12 @@ export default class ProductsController {
     //
 
     const offset = ((Number(req.query.page) || 0) - 1) * 20;
+    console.log(offset);
 
     try {
       const products = await ProductsModel.getAllProducts(20, offset, db);
 
-      if (!products) {
+      if (!products.length) {
         return next(new AppError(404, "No products found"));
       }
 
@@ -85,7 +86,7 @@ export default class ProductsController {
         db,
       );
 
-      if (!products) {
+      if (!products.length) {
         return next(new AppError(404, "No products found"));
       }
 
